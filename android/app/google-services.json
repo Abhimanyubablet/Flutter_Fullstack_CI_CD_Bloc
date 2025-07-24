@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "690559996874",
+    "project_id": "one-signal-notification-92d79",
+    "storage_bucket": "one-signal-notification-92d79.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:690559996874:android:d313621a30952e1523f533",
+        "android_client_info": {
+          "package_name": "com.example.crud_bloc_api_test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjdzkMfZKnow_b3_U2RwiemglaL8BZg8Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:690559996874:android:3065e93b4e95846823f533",
+        "android_client_info": {
+          "package_name": "com.example.onesignal_n0tification_demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjdzkMfZKnow_b3_U2RwiemglaL8BZg8Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

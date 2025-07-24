@@ -1,0 +1,73 @@
+name: Flutter CD
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger on tags like v1.0.0
+
+jobs:
+  build:
+    name: Build and Deploy
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # Android Signing
+      - name: Decode Keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+
+      - name: Set up key.properties
+        run: |
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=keystore.jks" >> android/key.properties
+
+      - name: Build Android AAB
+        run: flutter build appbundle --release
+
+      # Firebase Distribution for Android
+      - name: Install Firebase CLI
+        run: curl -sL https://firebase.tools | bash
+
+      - name: Distribute Android to Firebase
+        run: |
+          firebase appdistribution:distribute build/app/outputs/bundle/release/app-release.aab \
+            --app ${{ secrets.APP_ID_ANDROID }} \
+            --token "${{ secrets.FIREBASE_CLI_TOKEN }}" \
+            --groups "testers"
+
+      # Upload to Google Play Internal Track
+      - name: Upload AAB to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAYSTORE_JSON_KEY }}
+          packageName: com.example.yourapp # Change this to your actual package name
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: internal
+          status: completed
+
+      # Optional iOS Build
+      - name: Build iOS IPA (Optional)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          flutter build ipa --release \
+            --export-options-plist=ios/Runner/ExportOptions.plist
+
+      - name: Distribute iOS to Firebase (Optional)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          firebase appdistribution:distribute build/ios/ipa/Runner.ipa \
+            --app ${{ secrets.APP_ID_IOS }} \
+            --token "${{ secrets.FIREBASE_CLI_TOKEN }}" \
+            --groups "testers"

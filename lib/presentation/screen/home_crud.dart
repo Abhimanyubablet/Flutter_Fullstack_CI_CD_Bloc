@@ -48,7 +48,7 @@ class _HomeCrudState extends State<HomeCrud> {
                 backgroundColor: Colors.blue,
                 title: Center(
                     child: Text(
-                      "HomeCrud",
+                      "HomeCrud CI CD Pipeline",
                       style: TextStyle(color: Colors.white),
                     )),
                 actions: [
